@@ -1,0 +1,56 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+}
+
+group = 'ru.n08i40k'
+version = '1.1'
+
+repositories {
+    mavenCentral()
+
+    maven {
+        name = "papermc-repo-local"
+        url = "https://repo.papermc.io/repository/maven-public/"
+    }
+    maven {
+        name = "sonatype"
+        url = "https://oss.sonatype.org/content/groups/public/"
+    }
+    maven {
+        name = "CodeMC"
+        url = "https://repo.codemc.org/repository/maven-public/"
+    }
+    maven {
+        name = "jitpack"
+        url = "https://jitpack.io/"
+    }
+    maven { // orbit
+        name = "meteor-maven"
+        url = "https://maven.meteordev.org/releases"
+    }
+}
+
+dependencies {
+    compileOnly "com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT"
+
+    compileOnly "meteordevelopment:orbit:0.2.3"
+    compileOnly 'org.yaml:snakeyaml:2.2'
+
+    // LomBok
+    compileOnly 'org.projectlombok:lombok:1.18.30'
+    annotationProcessor 'org.projectlombok:lombok:1.18.30'
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId = group
+            artifactId = project.name.toLowerCase()
+            version = version
+
+            from components.java
+        }
+    }
+}
+
