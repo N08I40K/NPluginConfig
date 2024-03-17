@@ -24,11 +24,14 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
+@SuppressWarnings({"unused", "UnusedReturnValue"})
 public class Config<T> {
     @Getter
     private final Plugin plugin;
 
     private final Logger logger;
+
+    @Nullable
     private final IEventBus eventBus;
 
     @Getter
@@ -43,7 +46,7 @@ public class Config<T> {
     @Nullable
     private T data;
 
-    public Config(@NonNull Plugin plugin, @NonNull IEventBus eventBus, @NonNull String id,
+    public Config(@NonNull Plugin plugin, @Nullable IEventBus eventBus, @NonNull String id,
                   @NonNull Class<T> klass, @Nullable Set<String> allowedTags) {
         this.plugin = plugin;
         this.eventBus = eventBus;
@@ -146,7 +149,7 @@ public class Config<T> {
 
             saveTemplate();
             tryLoad();
-        } catch (IOException e) {
+        } catch (Exception e) {
             logger.error(e.getMessage());
 
             return false;
@@ -156,11 +159,13 @@ public class Config<T> {
     }
 
     public boolean load() {
-        eventBus.post(new ConfigLoadEvent.Pre<>(this));
+        if (eventBus != null)
+            eventBus.post(new ConfigLoadEvent.Pre<>(this));
 
         boolean successful = tryLoad();
 
-        eventBus.post(new ConfigLoadEvent.Post<>(this, successful));
+        if (eventBus != null)
+            eventBus.post(new ConfigLoadEvent.Post<>(this, successful));
 
         return successful;
     }
@@ -191,7 +196,7 @@ public class Config<T> {
         try (FileWriter writer = new FileWriter(
                 getConfigsDirectory().getPath() + "/" + id + ".yml", Charsets.UTF_8)) {
             yaml.dump(data, writer);
-        } catch (IOException e) {
+        } catch (Exception e) {
             logger.error(e.getMessage());
 
             return false;
@@ -201,11 +206,13 @@ public class Config<T> {
     }
 
     public boolean save() {
-        eventBus.post(new ConfigSaveEvent.Pre<>(this));
+        if (eventBus != null)
+            eventBus.post(new ConfigSaveEvent.Pre<>(this));
 
         boolean successful = trySave();
 
-        eventBus.post(new ConfigSaveEvent.Post<>(this, successful));
+        if (eventBus != null)
+            eventBus.post(new ConfigSaveEvent.Post<>(this, successful));
 
         return successful;
     }
