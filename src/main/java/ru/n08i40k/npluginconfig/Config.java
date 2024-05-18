@@ -136,7 +136,7 @@ public class Config<T> {
 
             loaded = true;
         } catch (FileNotFoundException e) {
-            if (Bukkit.getServer().getCurrentTick() - lastLoadTick > 0) {
+            if (Bukkit.getServer().getCurrentTick() == lastLoadTick) {
                 logger.error("""
                         An error occurred while loading the configuration!
                         The previous attempt to save the configuration template and reload failed!
